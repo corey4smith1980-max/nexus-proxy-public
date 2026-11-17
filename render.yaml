@@ -1,0 +1,32 @@
+# Render web service for the TanStack Start app.
+# Node runtime: Render does not ship Bun on the native Node image, so install
+# and start with npm and node. Bun remains the local toolchain.
+# Secrets use sync:false so the Dashboard prompts for them. No secret values here.
+services:
+  - type: web
+    name: nexus-proxy
+    runtime: node
+    plan: free
+    region: oregon
+    healthCheckPath: /
+    buildCommand: npm ci && VITE_SUPABASE_URL="$SUPABASE_URL" VITE_SUPABASE_PUBLISHABLE_KEY="$SUPABASE_PUBLISHABLE_KEY" VITE_LOCAL_PREVIEW=false npm run build
+    startCommand: HOST=0.0.0.0 node .output/server/index.mjs
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: SSHOCEAN_INVENTORY_MODE
+        value: live
+      - key: SSHOCEAN_API_BASE
+        value: https://api.sshocean.com
+      - key: SSHOCEAN_API_KEY
+        sync: false
+      - key: SSHOCEAN_API_SECRET
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: VITE_LOCAL_PREVIEW
+        value: "false"
